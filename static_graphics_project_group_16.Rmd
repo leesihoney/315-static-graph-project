@@ -1,0 +1,25 @@
+---
+title: "36-315 Static Graphics Project"
+author: "Andrew Lee, Weng Shian Ho, Daniel Liu, Yeju Ahn"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  hide
+---
+
+
++  A link to the dataset:
+[here](https://www.kaggle.com/mehdidag/black-friday)
+
+
++   Description of the dataset: The dataset here is a sample of the transactions made in a retail store. The store wants to know better the customer purchase behaviour against different products. Variables include:
++   Gender  
++   Age
++   Occupation
++   City
++   Number of years in current city
++   Marital Status
++   Product Category of products bought by each consumer
++   Purchase Amount
+
