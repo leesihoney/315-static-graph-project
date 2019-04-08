@@ -23,3 +23,11 @@ output:
 +   Product Category of products bought by each consumer
 +   Purchase Amount
 
+* CSV FILE
+```{r, message = FALSE}
+black_friday <- read.csv("https://raw.githubusercontent.com/leesihoney/315-static-graph-project/master/BlackFriday.csv")
+dim(black_friday)
+nrow(black_friday)
+ncol(black_friday)
+```
+
