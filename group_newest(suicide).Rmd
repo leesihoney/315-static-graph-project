@@ -114,3 +114,10 @@ country.suicides.2015$Group.2 <- clusterCut.2
 dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram
 ggplot(dend, horiz = F)
 ```
+
+#For siheon
+```{r}
+colnames(countries) <- c('long','lat','group', 'order','Country','subregion')
+map_data <- join(all.suicides.2015.data, countries, by = 'Country', type = "inner", match = "all")
+map_data[,3:5] <- NULL
+```
