@@ -10,7 +10,7 @@ output:
 
 
 +  A link to the dataset:
-[here](https://www.kaggle.com/mehdidag/black-friday)
+
 
 
 
@@ -29,11 +29,51 @@ nrow(suicide_data)
 ncol(suicide_data)
 ```
 
+#Choropleth Map (Siheon)
+
+```{r}
+countries <- map_data("world2")
+country_list <- unique(suicide_data$country)
+country_cords <- data.frame()
+for (i in 1:length(country_list)){
+  curr.country <- country_list[i]
+  curr.country.data <- countries[which(countries$region == curr.country),]
+  curr.avg.lat <- mean(curr.country.data$lat)
+  curr.avg.long <- mean(curr.country.data$long)
+  curr.dist <- data.frame(Country = curr.country, Lat = curr.avg.lat, long =  curr.avg.long)
+  country_cords <- rbind(country_cords, curr.dist)
+}
+
+#Manually fill in entries not found
+
+country_cords[which(country_cords$Country == 'Republic of Korea'),2] <- mean(countries[which(countries$region == "South Korea"),2])
+country_cords[which(country_cords$Country == 'Republic of Korea'),3] <- mean(countries[which(countries$region == "South Korea"),3])
+
+country_cords[which(country_cords$Country == 'United States'),2] <- mean(countries[which(countries$region == "USA"),2])
+country_cords[which(country_cords$Country == 'United States'),3] <- mean(countries[which(countries$region == "USA"),3])
+
+country_cords[which(country_cords$Country == 'Trinidad and Tobago'),2] <- mean(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),2])
+country_cords[which(country_cords$Country == 'Trinidad and Tobago'),3] <- mean(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),3])
+
+country_cords[which(country_cords$Country == 'Russian Federation'),2] <- mean(countries[which(countries$region == "Russia"),2])
+country_cords[which(country_cords$Country == 'Russian Federation'),3] <- mean(countries[which(countries$region == "Russia"),3])
+
+country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),2] <- mean(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),2])
+country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),3] <- mean(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),3])
+
+country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),2] <- mean(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),2])
+country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),3] <- mean(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),3])
+
+country_cords[which(country_cords$Country == 'Antigua and Barbuda'),2] <- mean(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),2])
+country_cords[which(country_cords$Country == 'Antigua and Barbuda'),3] <- mean(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),3])
+```
+
 #Dendrogram and Clustering (Weng and Daniel)
 
 ```{r}
 #Plan: Shall just look at 2015--> Look at the weighted average suicide rates and make a dendrogram plot based-off that
 
+#Edit sucide data
 suicides.2015 <- suicide_data[which(suicide_data$year == 2015),]
 country_list <- unique(suicides.2015$country)
 
@@ -46,16 +86,20 @@ for (i in 1:length(country_list)){
   curr.data.frame <- data.frame(Country = curr.country, Rate = curr.suicide.rate)
   country.suicides.2015 <- rbind(country.suicides.2015,curr.data.frame)
 }
+
+all.suicides.2015.data <- merge(country.suicides.2015,country_cords, by = intersect("Country", "Country"))
 ```
+
+
 
 #Dendrogram Plot
 ```{r}
-clusters <- hclust(dist(country.suicides.2015))
+clusters <- hclust(dist(all.suicides.2015.data))
 clusterCut <- cutree(clusters, 3)
 table(clusterCut, country.suicides.2015$Country)
 ```
 
 ```{r}
 dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram
-ggplot(dend, horiz = T)
+ggplot(dend, horiz = F)
 ```
