@@ -1,0 +1,61 @@
+---
+title: "36-315 Static Graphics Project"
+author: "Andrew Lee, Weng Shian Ho, Daniel Liu, Yeju Ahn"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  hide
+---
+
+
++  A link to the dataset:
+[here](https://www.kaggle.com/mehdidag/black-friday)
+
+
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(igraphdata)
+library(dendextend)
+```
+
+* CSV FILE
+```{r, message = FALSE}
+suicide_data <- read.csv("suicide-dataset.csv")
+dim(suicide_data)
+nrow(suicide_data)
+ncol(suicide_data)
+```
+
+#Dendrogram and Clustering (Weng and Daniel)
+
+```{r}
+#Plan: Shall just look at 2015--> Look at the weighted average suicide rates and make a dendrogram plot based-off that
+
+suicides.2015 <- suicide_data[which(suicide_data$year == 2015),]
+country_list <- unique(suicides.2015$country)
+
+country.suicides.2015 <- data.frame()
+
+for (i in 1:length(country_list)){
+  curr.country <- country_list[i]
+  curr.country.data <- suicides.2015[which(suicides.2015$country == curr.country),]
+  curr.suicide.rate <-  sum(curr.country.data$population/100000*curr.country.data$suicides.100k.pop)
+  curr.data.frame <- data.frame(Country = curr.country, Rate = curr.suicide.rate)
+  country.suicides.2015 <- rbind(country.suicides.2015,curr.data.frame)
+}
+```
+
+#Dendrogram Plot
+```{r}
+clusters <- hclust(dist(country.suicides.2015))
+clusterCut <- cutree(clusters, 3)
+table(clusterCut, country.suicides.2015$Country)
+```
+
+```{r}
+dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram
+ggplot(dend, horiz = T)
+```
