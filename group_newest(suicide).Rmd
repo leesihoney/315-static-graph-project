@@ -114,3 +114,48 @@ country.suicides.2015$Group.2 <- clusterCut.2
 dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram
 ggplot(dend, horiz = F)
 ```
+
+
+# draw map 
+```{r}
+library(ggsn)
+colnames(all.suicides.2015.data)[which(names(all.suicides.2015.data) == "Country")] <- "region"
+little_data <- select(all.suicides.2015.data, region, Rate)
+new_data <- left_join(countries, little_data, by = "region")
+
+# Converts a numeric array to an array of latitude labels
+latitude <- function(x)
+    paste0(format(x, digits = 3), "° ", ifelse(x > 0, "N", "S"))
+
+# Converts a numeric array to an array of longitude labels
+longitude <- function(x) 
+    paste0(format(x, digits = 3), "° ", ifelse(x > 0, "E", "W"))
+
+
+suicidal_map <- ggplot(new_data, 
+                       aes(x = long,
+                           y = lat,
+                           group = group,
+                           fill = Rate)) +
+  geom_polygon(aes(x = long + 0.005, y = lat - 0.002),
+               color = "grey50", size = 0.2, fill = "grey50") +
+  geom_polygon(color = "gray10", size = 0.2) +
+  coord_equal() +
+  labs(title = "Choropleth Map: Suicidal Rate Among countries",
+       fill = "Suicidal Rate") +
+  theme_void() +
+  theme(panel.background = element_rect(fill = NA, colour = "#cccccc"),
+        text = element_text(family = "Arial Narrow", size = 8),
+        plot.title = element_text(size = 12, face = "bold"),
+        plot.margin = unit(c(0, 0.25, 0.0, 0.25), "in"),
+        panel.border = element_rect(fill = NA, colour = "#cccccc"),
+        legend.text = element_text(size = 8))
+
+suicidal_map + 
+  scale_y_continuous(labels = latitude) +
+  scale_x_continuous(labels = longitude) +
+  theme(axis.text = element_text(size = 8, colour = "#333333")) +
+  ggsn::north(new_data, location = "bottomright", symbol = 10)
+```
+
+
