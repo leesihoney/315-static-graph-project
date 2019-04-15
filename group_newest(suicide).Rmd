@@ -14,7 +14,7 @@ output:
 
 
 
-```{r}
+```{r, message=FALSE}
 library(tidyverse)
 library(igraph)
 library(igraphdata)
@@ -90,7 +90,7 @@ country.suicides.2015 <- data.frame()
 for (i in 1:length(country_list)){
   curr.country <- country_list[i]
   curr.country.data <- suicides.2015[which(suicides.2015$country == curr.country),]
-  curr.suicide.rate <-  sum(curr.country.data$population/100000*curr.country.data$suicides.100k.pop)
+  curr.suicide.rate <-  sum(curr.country.data$suicides_no/curr.country.data$population)
   curr.data.frame <- data.frame(Country = curr.country, Rate = curr.suicide.rate)
   country.suicides.2015 <- rbind(country.suicides.2015,curr.data.frame)
 }
@@ -104,7 +104,10 @@ all.suicides.2015.data <- merge(country.suicides.2015,country_cords, by = inters
 ```{r}
 clusters <- hclust(dist(all.suicides.2015.data))
 clusterCut <- cutree(clusters, 3)
+clusterCut.2 <- cutree(clusters, 2)
 table(clusterCut, country.suicides.2015$Country)
+country.suicides.2015$Group.3 <- clusterCut
+country.suicides.2015$Group.2 <- clusterCut.2
 ```
 
 ```{r}
