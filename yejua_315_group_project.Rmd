@@ -1,0 +1,119 @@
+---
+title: "36-315 Static Graphics Project"
+author: "Andrew Lee, Weng Shian Ho, Daniel Liu, Yeju Ahn"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  hide
+---
+
++  A link to the dataset:
+[here](https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016)
+
++   Description of the dataset: 
+This dataset was built to find signals correlated to increased suicide rates among different cohorts globally, across the socio-economic spectrum.
+
+Variables include:
++   Country
++   Year
++   Sex
++   Age
++   Suicides No
++   Population
++   Suicides/100k pop
++   Country Year
++   HDI for year (Human Development Index)
++   gdp_for_year ($)
++   gdp_per_capita ($)
++   generation
+
+*CSV FILE*
+```{r}
+library(tidyverse)
+library(car)
+suicide_data <- read.csv("suicide-dataset.csv")
+dim(suicide_data)
+nrow(suicide_data)
+ncol(suicide_data)
+colnames(suicide_data)
+is.factor(suicide_data$country)
+is.factor(suicide_data$sex)
+is.factor(suicide_data$generation)
+```
+
+#Multiple Linear Regression Analysis
+
+Suicides/100k pop x Year  : Not significant
+```{r}
+suicide_year_mod <- lm(suicides_no ~ year , data = suicide_data)
+summary(suicide_year_mod)
+```
+
+Suicides/100k pop x Sex  : Significance
+```{r}
+suicide_sex_mod <- lm(suicides_no ~ sex, data = suicide_data)
+summary(suicide_sex_mod)
+```
+
+Suicides/100k pop x Country  : Significance
+```{r}
+suicide_country_mod <- lm(suicides_no ~ country, data = suicide_data)
+summary(suicide_country_mod)
+```
+
+Suicides/100k pop x Age : Significance
+```{r}
+suicide_age_mod <- lm(suicides_no ~ age, data = suicide_data)
+summary(suicide_age_mod)
+```
+
+Suicides/100k pop x GDP_per_capita : Significance
+```{r}
+suicide_gdp_mod <- lm(suicides_no ~ gdp_per_capita...., data = suicide_data)
+summary(suicide_gdp_mod)
+```
+
+Suicides/100k pop x Generation : Significance
+```{r}
+suicide_gen_mod <- lm(suicides_no ~ generation, data = suicide_data)
+summary(suicide_gen_mod)
+```
+
+Suicides/100k pop x HDI : Significance
+```{r}
+suicide_HDI_mod <- lm(suicides_no ~ HDI.for.year, data = suicide_data)
+summary(suicide_HDI_mod)
+```
+```{r}
+fit <- lm(suicides_no~sex+country+gdp_per_capita....+generation+HDI.for.year, data=suicide_data)
+summary(fit)
+```
+
+```{r fig.width=4, fig.width=5.5, fig.align="center",echo = FALSE}
+resid_new <- fit$residuals
+pred.vals_new <- fit$fitted.values
+plot(resid_new~pred.vals_new,
+     main = "Residuals vs Fitted", 
+     xlab = "Fitted values", 
+     ylab = "Residuals")
+abline(h=0)
+```
+
+```{r, fig.height=4, fig.width=5, echo=FALSE}
+qqnorm(resid_new,
+       main="Normal probability plot for residuals") 
+qqline(resid_new)
+```
+
+
+```{r}
+vif(fit) # variance inflation factors 
+```
+
+
+#Times Series Plot
+
+
+
+
