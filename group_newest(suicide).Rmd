@@ -40,32 +40,40 @@ for (i in 1:length(country_list)){
   curr.country.data <- countries[which(countries$region == curr.country),]
   curr.avg.lat <- mean(curr.country.data$lat)
   curr.avg.long <- mean(curr.country.data$long)
-  curr.dist <- data.frame(Country = curr.country, Lat = curr.avg.lat, long =  curr.avg.long)
+  curr.avg.grp <- round(median(curr.country.data$group))
+  curr.dist <- data.frame(Country = curr.country, Lat = curr.avg.lat, long =  curr.avg.long, group = curr.avg.grp)
   country_cords <- rbind(country_cords, curr.dist)
 }
 
 #Manually fill in entries not found
 
 country_cords[which(country_cords$Country == 'Republic of Korea'),2] <- mean(countries[which(countries$region == "South Korea"),2])
-country_cords[which(country_cords$Country == 'Republic of Korea'),3] <- mean(countries[which(countries$region == "South Korea"),3])
+country_cords[which(country_cords$Country == 'Republic of Korea'),3] <- mean(countries[which(countries$region == "South Korea"),1])
+country_cords[which(country_cords$Country == 'Republic of Korea'),4] <- round(median(countries[which(countries$region == "South Korea"),3]))
 
 country_cords[which(country_cords$Country == 'United States'),2] <- mean(countries[which(countries$region == "USA"),2])
-country_cords[which(country_cords$Country == 'United States'),3] <- mean(countries[which(countries$region == "USA"),3])
+country_cords[which(country_cords$Country == 'United States'),3] <- mean(countries[which(countries$region == "USA"),1])
+country_cords[which(country_cords$Country == 'United States'),4] <- round(median(countries[which(countries$region == "USA"),3]))
 
 country_cords[which(country_cords$Country == 'Trinidad and Tobago'),2] <- mean(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),2])
-country_cords[which(country_cords$Country == 'Trinidad and Tobago'),3] <- mean(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),3])
+country_cords[which(country_cords$Country == 'Trinidad and Tobago'),3] <- mean(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),1])
+country_cords[which(country_cords$Country == 'Trinidad and Tobago'),4] <- round(median(countries[which(countries$region == "Trinidad" | countries$region == "Tobago"),3]))
 
 country_cords[which(country_cords$Country == 'Russian Federation'),2] <- mean(countries[which(countries$region == "Russia"),2])
-country_cords[which(country_cords$Country == 'Russian Federation'),3] <- mean(countries[which(countries$region == "Russia"),3])
+country_cords[which(country_cords$Country == 'Russian Federation'),3] <- mean(countries[which(countries$region == "Russia"),1])
+country_cords[which(country_cords$Country == 'Russian Federation'),4] <- round(median(countries[which(countries$region == "Russia"),3]))
 
 country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),2] <- mean(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),2])
-country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),3] <- mean(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),3])
+country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),3] <- mean(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),1])
+country_cords[which(country_cords$Country == 'Saint Kitts and Nevis'),4] <- round(median(countries[which(countries$region == "Saint Kitts" | countries$region == "Nevis"),3]))
 
 country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),2] <- mean(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),2])
-country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),3] <- mean(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),3])
+country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),3] <- mean(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),1])
+country_cords[which(country_cords$Country == 'Saint Vincent and Grenadines'),4] <- round(median(countries[which(countries$region == "Saint Vincent" | countries$region == "Grenadines"),3]))
 
 country_cords[which(country_cords$Country == 'Antigua and Barbuda'),2] <- mean(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),2])
-country_cords[which(country_cords$Country == 'Antigua and Barbuda'),3] <- mean(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),3])
+country_cords[which(country_cords$Country == 'Antigua and Barbuda'),3] <- mean(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),1])
+country_cords[which(country_cords$Country == 'Antigua and Barbuda'),4] <- round(median(countries[which(countries$region == "Antigua" | countries$region == "Barbuda"),3]))
 ```
 
 #Dendrogram and Clustering (Weng and Daniel)
