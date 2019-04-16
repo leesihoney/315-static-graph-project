@@ -1,0 +1,106 @@
+---
+title: "36-315 Static Graphics Project"
+author: "Andrew Lee, Weng Shian Ho, Daniel Liu, Yeju Ahn"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
++  A link to the dataset:
+[here](https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016)
+
++   Description of the dataset: 
+This dataset was built to find signals correlated to increased suicide rates among different cohorts globally, across the socio-economic spectrum.
+
+Variables include:
++   Country
++   Year
++   Sex
++   Age
++   Suicides No
++   Population
++   Suicides/100k pop
++   Country Year
++   HDI for year (Human Development Index)
++   gdp_for_year ($)
++   gdp_per_capita ($)
++   generation
+
+*CSV FILE*
+```{r}
+library(tidyverse)
+library(car)
+suicide_data <- read.csv("suicide-dataset.csv")
+dim(suicide_data)
+nrow(suicide_data)
+ncol(suicide_data)
+colnames(suicide_data)
+is.factor(suicide_data$country)
+is.factor(suicide_data$sex)
+is.factor(suicide_data$generation)
+```
+
+```{r,warning = FALSE,message = FALSE}
+library(igraph)
+library(igraphdata)
+library(dendextend)
+countries <- map_data("world2")
+country_list <- unique(suicide_data$country)
+country_cords <- data.frame()
+for (i in 1:length(country_list)){
+  curr.country <- country_list[i]
+  curr.country.data <- countries[which(countries$region == curr.country),]
+  curr.avg.lat <- mean(curr.country.data$lat)
+  curr.avg.long <- mean(curr.country.data$long)
+  curr.avg.grp <- round(median(curr.country.data$group))
+  curr.dist <- data.frame(Country = curr.country, Lat = curr.avg.lat, long =  curr.avg.long, group = curr.avg.grp)
+  country_cords <- rbind(country_cords, curr.dist)
+}
+
+suicides.2015 <- suicide_data[which(suicide_data$year == 2015),]
+country_list <- unique(suicides.2015$country)
+country.suicides.2015 <- data.frame()
+
+for (i in 1:length(country_list)){
+  curr.country <- country_list[i]
+  curr.avg.gdp <- mean(curr.country.data$gdp_per_capita....)
+  curr.country.data <- suicides.2015[which(suicides.2015$country == curr.country),]
+  curr.suicide.rate <-  sum(curr.country.data$suicides_no/curr.country.data$population)
+  curr.data.frame <- data.frame(Country = curr.country, Rate = curr.suicide.rate)
+  country.suicides.2015 <- rbind(country.suicides.2015,curr.data.frame)
+}
+all.suicides.2015.data <- merge(country.suicides.2015,country_cords, by = intersect("Country", "Country"))
+
+mod_2015 <- ggplot(suicides.2015, aes(x =gdp_per_capita....,y = suicides_no, label = country)) + geom_text(check_overlap = TRUE,aes(color = population)) +
+  labs(title = "GDP Per Capita in 2015 ",x =  "GDP Per Capita", y = "Suicides No.")
+mod_2015
+```
+
+
+```{r}
+mod_1990 <- suicides.1990 <- suicide_data[which(suicide_data$year == 1990),]
+ggplot(suicides.1990, aes(x =gdp_per_capita....,y = suicides_no, label = country)) + geom_text(check_overlap = TRUE,aes(color = population)) +
+  labs(title = "GDP Per Capita in 1990",x =  "GDP Per Capita", y = "Suicides No.")
+```
+
+
+```{r}
+suicide_data <- suicide_data %>% filter(year %in% c("1990","  ","2015"))
+ggplot(suicide_data, aes(x =gdp_per_capita....,y = suicides_no, label = country)) + geom_text(check_overlap = TRUE,aes(color = population, size= factor(year))) +
+  labs(title = "GDP Per Capita of countries in 1990 and 2015",x =  "GDP Per Capita", y = "Suicides No.", size = "Year")
+```
+
+
+
+```{r}
+Pclass_dist_plot <- ggplot(data = suicide_data, aes(x = generation))
+
+Pclass_dist_plot + geom_bar(aes(x = factor(1),fill = generation)) + coord_polar(theta = "y") +labs(
+ title = "Suicide Deaths by Generation", x = "", y = "")+  theme(
+        axis.text.y = element_blank(),axis.ticks.y = element_blank())
+```
+
