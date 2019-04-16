@@ -27,6 +27,8 @@ suicide_data <- read.csv("suicide-dataset.csv")
 dim(suicide_data)
 nrow(suicide_data)
 ncol(suicide_data)
+names(suicide_data)
+
 ```
 
 #Choropleth Map (Siheon)
@@ -88,6 +90,7 @@ country_list <- unique(suicides.2015$country)
 country.suicides.2015 <- data.frame()
 
 for (i in 1:length(country_list)){
+  
   curr.country <- country_list[i]
   curr.country.data <- suicides.2015[which(suicides.2015$country == curr.country),]
   curr.suicide.rate <-  sum(curr.country.data$suicides_no/curr.country.data$population)
@@ -96,12 +99,14 @@ for (i in 1:length(country_list)){
 }
 
 all.suicides.2015.data <- merge(country.suicides.2015,country_cords, by = intersect("Country", "Country"))
+all.suicides.2015.data
 ```
 
 
 
 #Dendrogram Plot
 ```{r}
+library(ggdendro)
 clusters <- hclust(dist(all.suicides.2015.data))
 clusterCut <- cutree(clusters, 3)
 clusterCut.2 <- cutree(clusters, 2)
@@ -111,13 +116,16 @@ country.suicides.2015$Group.2 <- clusterCut.2
 ```
 
 ```{r}
-dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram
-ggplot(dend, horiz = F)
-```
+bar_colors <- ifelse(all.suicides.2015.data$Rate>median(all.suicides.2015.data$Rate), 
+                    "forestgreen", "green")
+dend <- country.suicides.2015$Rate %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
+  set("labels_col", value = c("skyblue", "orange", "grey"), k=3) %>%
+  set("branches_k_color", value = c("skyblue", "orange", "grey"), k = 3) %>%
+  set("leaves_pch", 19)  %>% set("nodes_cex", 0.7) %>% set("nodes_col", c("forestgreen", "light blue")) %>%
+  set("labels_cex", c(0.6)) 
+plot(dend, main="Hierarchical Clustering of Suicide Rate by Region",
+     axes=FALSE)
 
-#For siheon
-```{r}
-colnames(countries) <- c('long','lat','group', 'order','Country','subregion')
-map_data <- join(all.suicides.2015.data, countries, by = 'Country', type = "inner", match = "all")
-map_data[,3:5] <- NULL
+colored_bars(colors = bar_colors, dend = dend, 
+             rowLabels = "Suicide Rate")
 ```
